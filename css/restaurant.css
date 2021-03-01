@@ -1,0 +1,47 @@
+.restaurant-menu{
+    font-size:9pt; 
+    display: flex; 
+    flex-direction: column;
+    margin-left:5px;
+}
+.menu-desserts{
+    margin-bottom: 10px;
+    width:400px; height: 300px;
+    color:white;
+    background-image: url('../images/restaurant-menu-desserts.jpg');
+}
+.menu-drinks{
+    width:400px; height: 300px;
+    color:white;
+    background-image: url('../images/restaurant-menu-drinks.jpg');
+}
+.menu-starters{
+    width:400px; height: 300px;
+    color:black;
+    background-image: url('../images/restaurant-menu-starters.jpg');
+    margin-bottom: 10px;
+}
+.menu-main{
+    width:400px; height: 300px;
+    color:white;
+    background-image: url('../images/restaurant-menu-main.jpg');
+    margin-bottom: 10px;
+
+}
+.restaurant-menu-title {
+    font-size:20pt;
+    font-style: italic;
+    margin-left: 5px;
+}
+.menu-offer{
+    margin:5px;
+    display:flex;
+    flex-direction: row;   
+    justify-content: space-between;
+}
+.menu-offer .menu-name{
+    margin-left:5px;
+}
+.menu-offer .menu-price{
+    margin:5px 150px 5px 5px;
+}

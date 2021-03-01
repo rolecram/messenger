@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+<script src="./dist/jsbn.js"></script>
+<script src="./dist/jsbn2.js"></script>
+<script src="./dist/sjcl.js"></script>
+
+-->
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.0.min.js"></script>
+<script src="../node_modules/amazon-cognito-identity-js/dist/amazon-cognito-identity.js"></script>
+<!--<script src="./dist/aws-cognito-sdk.min.js"></script>-->
+<style>
+    div{margin:5px;}
+</style>
+
+
+</head>
+<body>
+<div class="panel" id="register">
+
+    <h3>Create/Register User</h3>
+
+    <div>Mail:</div>
+    <div>
+        <input id="idmail0" value="marcelo@server.com">
+    </div>
+
+    <div>Phone:</div>
+    <div>
+        <input id="idphone0" value="+54911xxxxx">
+    </div>
+
+    <div>Name:</div>
+    <div>
+        <input id="idname0" value="Marcelo">
+    </div>
+    <div>Temporary Password:</div>
+    <div>
+        <input id="idpassword0" value="">
+    </div>
+    <div>
+        <button onclick="javascript:createUser();">Create User</button>
+    </div>
+    <div>
+        <button onclick="javascript:enableMFA(true);">Enabled MFA</button>
+    </div>
+    <div>
+        <button onclick="javascript:enableMFA(false);">Disabled MFA</button>
+    </div>
+    <div>
+        <button onclick="javascript:signUp();">Sign Set</button>
+    </div>
+
+</div>
+<!--
+<div class="panel">
+    <h3>Confirm</h3>
+
+    <div>Enter your confirmation code</div>
+    <div><input id="idconfirm" /></div>
+    <div>
+        <button onclick="javascript:confirm();">Confirm</button>
+    </div>
+</div>
+-->
+<div class="panel" id="login">
+    <h3>Login</h3>
+
+    <div>Mail:</div>
+    <div>
+        <input id="idmail" value="marcelo@server.com">
+    </div>
+
+    <div>Password:</div>
+    <div>
+        <input id="idpassword" value="">
+    </div>
+    <div>New Password:</div>
+    <div>
+        <input id="idnewpassword" value="">
+    </div>
+    <div>
+        <button onclick="javascript:login();">Log in</button>
+    </div>
+    <div>
+        <button onclick="javascript:listS3();">List S3 bucket</button>
+    </div>
+</div>
+<div class="panel">
+    <h3>MFA</h3>
+
+    <div>Code:</div>
+    <div>
+        <input id="idmfa">
+    </div>
+    <div>
+        <button onclick="javascript:sendMFA();">Send MFA</button>
+    </div>
+</div>
+
+<script>
+    //AWSCognito.config.region = 'us-east-1'; // Region
+
+    var poolData = {
+        UserPoolId : 'your user pool id here', // your user pool id here
+        ClientId : 'your client id here', // your client id here
+    };
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    var congnitoUser = null;
+    AWS.config.update({accessKeyId: 'access key id', secretAccessKey: 'secret access key', region:'us-east-1'});
+    
+    function listS3() 
+    {
+
+        
+        AWS.config.credentials.refresh(error => {
+                    if (error) {
+                        console.log('error config credentials.')
+                        console.error(error);
+                    } else {
+                        // Instantiate aws sdk service objects now that the credentials have been updated.
+                        // example: var s3 = new AWS.S3();
+                        console.log('Successfully logged!');
+                        var s3 = new AWS.S3();
+                        var params = {
+                            Bucket: "hotelclass.sample", 
+                            MaxKeys: 2
+                        };
+                        s3.listObjects(params, function(err, data) {
+                            if (err) 
+                                console.log(err, err.stack); // an error occurred
+                            else     
+                                console.log(data);           // successful response                    
+                        });
+                    }
+                });               
+
+    }
+    function createUser()
+    {
+        //adminConfirmSignUp
+        
+        var params = {
+            UserPoolId: 'user pool id', /* required */
+            Username: document.getElementById('idmail0').value, /* required */
+            DesiredDeliveryMediums: [
+                'EMAIL',
+                /* more items */
+            ],
+            ForceAliasCreation: false,
+            //MessageAction: 'SUPPRESS',
+            //TemporaryPassword: document.getElementById('idpassword0').value,
+            UserAttributes: [
+                {
+                Name: 'phone_number', /* required */
+                Value: document.getElementById('idphone0').value
+                },
+                {
+                Name: 'name', /* required */
+                Value: document.getElementById('idname0').value
+                },
+                {
+                Name: 'email', /* required */
+                Value: document.getElementById('idmail0').value
+                },
+                {
+                    Name:'email_verified',
+                    Value:'True'
+                }
+                /* more items */
+            ]
+            };
+        //const idp = new AWSCognito.CognitoIdentityServiceProvider({region: "us-east-1"});
+        const idp = new AWS.CognitoIdentityServiceProvider({region: "us-east-1"});
+        
+        console.log(idp);
+        idp.adminCreateUser(params, function(err, data){
+            if (err) 
+                console.log(err, err.stack); // an error occurred
+            else     
+                console.log('create user SUCCESS');
+                console.log(data);           // successful response
+                /*
+                */
+
+            });
+    }
+    function enableMFA(e)
+    {
+        var smsMfaSettings = {
+            PreferredMfa: e?true:false,
+            Enabled: e?true:false,
+        };
+        cognitoUser.setUserMfaPreference(smsMfaSettings, null, function(err, result) {
+            if (err) {
+                console.error(err.message || JSON.stringify(err));
+            } else
+            {
+                console.log('mfa preference SET:' + result);
+            }
+        });                
+     
+    }  
+    function sendMFA(session)
+    {
+        cognitoUser.sendMFACode(document.getElementById('idmfa').value, {
+            onSuccess: function (result) {
+                console.log('success login mfa verification!');
+                console.log(result);
+                enableMFA(false);
+                //Change MFA Option
+            },
+            onFailure: function(err) {
+                console.error(err);
+            }
+        });
+
+
+    }      
+    function login()
+    {
+        console.log('Try Login...');
+        var mail = document.getElementById('idmail').value;
+        var password = document.getElementById('idpassword').value;
+        var userData = {
+            Username: mail, 
+            Pool : userPool,
+        }
+        cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+        var authenticationData = {Username : mail, Password : password};
+        var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+
+        cognitoUser.authenticateUser(authenticationDetails, {
+            onSuccess: function (result) {
+                console.log(result);
+                //var idToken = result.idToken.jwtToken;
+                //console.log('idToken:' + idToken);
+                //cognitoUser = result.user;
+                //console.log('User Name is:' + cognitoUser.getUsername());
+                console.log('Logged in');
+/*
+                cognitoUser.getSession(function(err, session) {
+                    if (err) {
+                        console.error('Can not get Session:' + err);
+                        return;
+                    }
+                });
+
+                console.log('session validity: ' + session.isValid());
+                console.log('session token: ' + session.getIdToken().getJwtToken());
+*/
+                var accessToken = result.getAccessToken().getJwtToken();
+                console.log('access token:' + accessToken);
+                var sections = accessToken.split('.');
+                for(var i=0 ; i < sections.length ; i++)
+                    console.log('array[' + i + ']' + sections[i]);
+                
+                //let header = jose.util.base64url.decode(sections[0]);
+                //console.log(header);
+                //POTENTIAL: Region needs to be set if not already set previously elsewhere.
+                AWS.config.region = 'us-east-1';
+
+                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: 'identity pool', // your identity pool id here
+                    Logins: {
+                        // Change the key below according to the specific region your user pool is in.
+                        'cognito-idp.us-east-1.amazonaws.com/xxxxxxx': result
+                            .getIdToken()
+                            .getJwtToken(),
+                    },
+                });
+                //refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
+                AWS.config.credentials.refresh(error => {
+                    if (error) {
+                        console.log('error config credentials.')
+                        console.error(error);
+                    } else {
+                        // Instantiate aws sdk service objects now that the credentials have been updated.
+                        // example: var s3 = new AWS.S3();
+                        console.log('Successfully logged!');
+                        var s3 = new AWS.S3();
+                        var params = {
+                            Bucket: "hotelclass.sample", 
+                            MaxKeys: 2
+                        };
+                        s3.listObjects(params, function(err, data) {
+                            if (err) 
+                                console.log(err, err.stack); // an error occurred
+                            else     
+                                console.log(data);           // successful response                    
+                        });
+                    }
+                });               
+
+            },
+            onFailure: function(err) {
+                console.error(err);
+            },
+            newPasswordRequired: function(userAttributes, requiredAttributes) {
+                console.log('new password required');
+                console.log('user attributes:' + userAttributes);
+                delete userAttributes.email_verified;
+                cognitoUser.completeNewPasswordChallenge(document.getElementById('idnewpassword').value, userAttributes, {
+                    
+                    onSuccess: result => {
+                        console.log('Change Password SUCCESS');
+                        console.log(result);
+                        enableMFA(true);
+                    },
+                    onFailure: err => {
+                        console.error(err);
+                    }
+                });
+
+            },
+            mfaRequired: function(session){
+                console.log('need send MFA');
+
+            }
+
+
+        });
+
+    }
+</script>
+
+</body>
+</html>

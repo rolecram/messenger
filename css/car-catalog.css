@@ -1,0 +1,25 @@
+.car-catalog{
+    font-size: 10pt;
+
+}
+.car{
+    display: flex;
+    flex-direction: column;
+
+}
+.car-photo{
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin:5px;
+}
+.car-title{
+    font-style: italic;
+    font-size: 20pt;
+    color:slateblue;
+    margin-left:5px;
+}
+.car-text{
+    font-style: oblique;
+    font-size: 9pt;
+    margin-left:5px;
+}

@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Hotel Class Messenger</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+        <link rel="stylesheet" href="css/services.css" />
+        <link rel="stylesheet" href="css/message.css" />
+        <link rel="stylesheet" href="css/restaurant.css" />
+        <link rel="stylesheet" href="css/car-catalog.css" />
+        <script src="js/services.js"></script>
+        <script src="js/services-data.js"></script>
+        <script src="js/message.js"></script>
+        <script src="js/restaurant-menu.js"></script>
+        <script src="js/car-catalog.js"></script>
+		<script src="js/amazon-cognito-identity.js"></script>
+		<script src="js/login.js"></script>
+
+		<style>
+			.frame {
+				width:1001px;
+				height: 601px;
+				border:1px solid #ccc;
+			}
+			.up{
+				width: 991px;
+				height: 75px;
+				padding:5px;
+                background-image: url('images/back-5.gif');
+                display:flex;
+                flex-direction: row;
+			}
+			.up .left{
+                width:249px;
+                display:flex;
+                flex-direction: column;
+            }
+            .up .left .login-container{
+                display:flex;
+                flex-direction: row;
+                margin:0;
+            }
+			.up .right{
+				width:741px;
+                /*height: 100px;*/
+                display:flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: stretch;
+                margin-left:10px;
+
+                
+			}
+			.userinfo
+			{
+				font-family: "Open Sans", Verdana;
+				font-size: 10pt;
+                margin-top:5px;
+                display: flex;
+                flex-direction: row;
+                min-width:150px;
+			}
+			.userinfo .image{
+				width:70px;
+				height:70px;
+				border:1px solid #ccc;
+				border-radius: 10px;
+				overflow: hidden;
+            }
+            .userinfo .description{
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+            }
+			.userinfo .description .name{
+				font-weight: bold;
+			}
+			.userinfo .description .info{
+				font-size:9pt;
+				font-weight: bold;
+            }
+            .logo{
+                opacity: 75%;
+            }
+			.contacts{
+				width:250px;
+				/*height:490px;*/
+				height:515px;
+				float:left;
+				overflow: auto;
+				background-image: url('images/back-3.gif');
+
+			}
+			.contacts::-webkit-scrollbar {
+					width: 8px;
+			}
+			.contacts::-webkit-scrollbar-track {
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.3); 
+					border-radius: 1px;
+			}
+
+			.contacts::-webkit-scrollbar-thumb {
+					border-radius: 1px;
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.5); 
+			}
+			.contacts .contact .notifications{
+				font-size:10pt;font-weight: bold;
+			}
+			.chat{
+				width: 750px;
+				/*height: 490px;*/
+				/*border-bottom:1px solid #ccc;*/
+				float:left;
+			}
+			.chat .allmessages{
+				display:flex;
+				flex-direction: column;
+				height:475px;
+				background-image: url('images/back-3.gif');
+            }
+            /*
+			.chat .notification-up::-webkit-scrollbar {
+					width: 8px;
+			}
+			.chat .notification-up::-webkit-scrollbar-track {
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.3); 
+					border-radius: 1px;
+			}
+			.chat .notification-up::-webkit-scrollbar-thumb {
+					border-radius: 1px;
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.5); 
+            }
+            */
+			.chat .notification-up, .notification-down {
+                max-height: 0;
+				overflow-y: hidden;
+                display: flex;flex-direction: row;
+
+                font-family: "Open Sans", Verdana;
+				font-size:10pt;
+				font-weight: bold;
+				background-color: white;
+
+				width: 400px;
+				margin-left:10px;
+                
+
+            }
+			.chat .notification-up
+			{
+				max-height: 50px ;
+
+				-webkit-transition: max-height 0.5s ease-in;
+				-moz-transition: max-height 0.5s ease-in;
+				-o-transition: max-height 0.5s ease-in;
+				transition: max-height 0.5s ease-in;
+
+				/*background-image:url('images/back-6.gif');*/
+                padding:5px;
+                margin-top:5px;
+				border-color:#c0c0c0;
+				border-style: solid;
+                border-radius: 5px;
+				border-width: 1px 1px 1px 6px;
+
+            }
+            
+			.chat .messages{
+				flex: 1;
+				flex-grow: 1;
+				overflow: auto;
+			}
+			.chat .messages::-webkit-scrollbar {
+					width: 8px;
+			}
+			.chat .messages::-webkit-scrollbar-track {
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.3); 
+					border-radius: 1px;
+			}
+			.chat .messages::-webkit-scrollbar-thumb {
+					border-radius: 1px;
+					-webkit-box-shadow: inset 0 0 6px rgba(128,128,128,0.5); 
+			}
+
+			.chat .input{
+				padding:3px;
+				background-image: url('images/back-3.gif');
+
+            }
+			.chat .input .inputtext {
+				border-radius: 15px 50px 30px;
+				border-color:#c0c0c0 #c0c0c0 #C0C0C0 #c0c0c0;
+				border-style: solid;
+				border-width: 1px 6px 1px 6px;
+                font-family: "Open Sans";
+                width:450px;
+                height: 20px;
+                padding:5px;
+                margin-left:20px;
+			}
+			.chat .input .inputtext:focus {
+				outline: none !important;
+				box-shadow: 0 0 5px #ccc;
+			}			
+			.chat .input .priority {
+				border-radius: 5px 5px 5px;
+				margin: 0px 0px 0px auto;
+				background-color: white;
+				color: gray;
+				font-weight: bold;
+				font-size:8pt;
+				padding:5px;
+				border:1px solid #ccc;
+				font-family:"Open Sans", Verdana; 
+				cursor: pointer;
+			}
+			.input .icon{
+				font-size:16pt;
+				filter: grayscale(90%);
+				cursor: pointer;
+			}
+
+			.contact{
+				padding: 3px;
+				font-family: "Open Sans",Verdana; 
+				cursor: pointer;
+				border: 1px solid lightgray;
+				border-radius: 8px;
+				margin: 5px 3px 5px 3px;
+				display: block;
+				overflow: auto;	
+                background-color: white;
+                user-select: none;
+                
+            }
+
+			.contact .name{
+				font-size:11pt;
+				font-weight: bold;
+				margin-left:5px;
+				margin-bottom:5px;
+			}
+			.contact .hour{
+				font-size:8pt;
+				text-align:right;
+				float:right;
+                clear:left;
+                margin-left:3px;
+                font-weight: bold;
+			}
+			.contact .text{
+				font-size:10pt;
+				margin-left:5px;
+				margin-top: 0px;
+			}
+			.contact .unread-normal{
+				display:table; 
+				border-radius: 5px 5px 5px;
+				margin: 0px 0px 0px auto;
+				background-color:lightgreen;
+				font-size:8pt;
+                padding:1px 4px 1px 4px;	
+                font-weight: bold;
+				clear:left;
+				float:right		
+			}
+			.contact .unread-high{
+				display:table; 
+				border-radius: 5px 5px 5px;
+				margin: 0px 0px 0px auto;
+				background-color:lightsalmon;
+                font-size:8pt;
+                font-weight: bold;
+				padding:1px 4px 1px 4px;	
+				clear:left;
+				float:right;		
+			}
+			
+			.contact .image{
+				float:left; 
+				margin-right:5px; 
+				width:70px;
+				height:70px;
+				
+				border:1px solid #ccc;
+				border-radius: 10px;
+				overflow: hidden;
+			}
+			.contact .image img{
+				max-width:100%;
+				max-height: 100%;
+			}
+			.contact .header{
+                display:flex;
+                flex-direction: row; 
+				font-size:8pt;
+				font-weight: bold;
+				padding:2px;				
+            }
+            .contact .header .send{
+                margin-left: 3px;
+                padding:0px 2px;
+                border:1px solid #ccc;
+                border-radius: 3px;
+            }
+            .contact .header .remove{
+                margin-left: 3px;
+                padding:0px 2px;
+                border:1px solid #ccc;
+                border-radius: 3px;
+                
+            }
+            .contact .header .role
+            {
+				border-radius: 5px 5px 5px;
+				margin: 0px 0px 0px auto;
+				background-color:lightblue;
+
+            }
+            .contact .header .send:hover{
+				   background-color:#ccc;
+			}            
+            .contact .header .remove:hover{
+                background-color:#ccc;
+            }
+            .body{
+                display:flex;
+                flex-direction: column;
+            }
+			.body:hover{
+				   background-color:#f9f9f9;
+			}
+
+            /*
+			.button{
+				font-size:12pt;
+				margin-left:25px;
+				margin-bottom:5px;
+				border: 1px solid #c0c0c0;
+				border-radius: 5px 5px 5px;
+				position: relative;
+				overflow: hidden;
+				width:100px;
+				background-color:#fff;
+				padding:5px;
+            }
+            */
+			.login{
+				width:80px;
+				border-radius: 15px 50px 30px;
+				border-color:#c0c0c0 #c0c0c0 #C0C0C0 #c0c0c0;
+				border-style: solid;
+				border-width: 1px 1px 1px 1px;
+                font-family: "Open Sans";
+                padding-left: 10px;
+            }
+			.login:focus {
+				outline: none !important;
+				box-shadow: 0 0 5px #ccc;
+			}			
+			.typing{
+				color:#00C000;
+				font-size:9pt;
+				font-weight: bold;
+				margin-left:0px;
+				margin-top: 0px;
+				display:none;
+            }
+            .user-right-space{
+                display: none;
+                align-self: flex-end;
+                margin-left: 5px;
+                margin-right: auto;
+            }
+            .user-right-space .button{
+                font-family:'Open Sans';
+                font-size:9pt;
+                font-weight: bold;
+                width:fit-content;
+                background-color: #fcfcfc;
+                border:1px solid #808080;
+                border-radius: 5px;
+                cursor: pointer;
+                padding:5px;
+                margin:3px;
+            }
+            .user-right-space .button:hover{
+                background-color:#ccc;
+            }
+            .xbutton{
+                font-family:'Open Sans';
+                font-size:9pt;
+                font-weight: bold;
+                width:fit-content;
+                background-color: #fcfcfc;
+                border:1px solid #808080;
+                border-radius: 5px;
+                cursor: pointer;
+                padding:0px 3px 0px 3px;
+                margin-left:5px;
+
+            }
+            .xbutton:hover{
+                background-color:#ccc;
+            }
+            .enableBlur>* {
+            filter: blur(1.2px);
+            }
+
+            .disableBlur {
+            filter: blur(0);
+            }
+		</style>
+	</head>
+	<body>
+		<audio id="idPlayer-message-high" preload="auto" autobuffer src="sounds/message-high.mp3"></audio> 
+		<audio id="idPlayer-message-normal" preload="auto" autobuffer src="sounds/message-normal.mp3"></audio>
+		<!--<audio id="idPlayer-notify-info" preload="auto" autobuffer src="sounds/notify-info.mp3"></audio>-->
+		<audio id="idPlayer-notify-info" preload="auto" autobuffer src="sounds/dingdong.mp3"></audio>
+		<audio id="idPlayer-notify-warning" preload="auto" autobuffer src="sounds/notify-warning.mp3"></audio>
+		<audio id="idPlayer-notify-alarm" preload="auto" autobuffer src="sounds/notify-alarm.mp3"></audio>
+		<audio id="idPlayer-panic" preload="auto" autobuffer src="sounds/panic.mp3"></audio>
+		<div class="frame">
+			<div class="up">
+				<div class="left">
+					<div class="login-container">
+						<input class="login" id="idUser" value="" placeholder="User"/>
+						<input class="login" id="idPassword" value="" placeholder="Password"/>
+                        <!--<div class="xbutton" onclick="login();">Login</div>-->
+                        <button style="margin-left:3px;" onclick="login();">Login</button>
+					</div>
+					<div id="idUserInfo" class ="userinfo">
+
+					</div>
+				</div>
+				<div class="right">
+					<div id="idContactSelected" class ="userinfo">
+                        <!--
+						<div class="image" style="width: 45px;height: 45px;">
+							<img style="max-width:100%;max-height:100%;" src="images/julia.jpg"/>
+                        </div>
+                        <div class="description">
+                            <div class="name">Julia</div>
+                            <div class="info">Super Host</div>
+                            <div class="typing" style="display:block;font-size:9pt;">Typing...</div>
+                        </div>
+                        -->
+                    </div>
+                    <div class="user-right-space" id="id-user-buttons">
+                        <!--<div class="button" onclick="sendContact(state.selectedContact.id);">Send Contact</div>-->
+                        <div class="button" id="id-button-services" onclick="panelServices();">Open Services</div>
+                        <!--<div class="button" id="id-show-keys" state="close" onclick="showKeys();">Show Keys</div>-->
+                    </div>
+					<!--
+					<div style=" margin:5px auto 5px 5px;">
+						<button onclick="addContact('yadira')">Add Yadira to Me</button>
+						<button onclick="sendContact('yadira')">Send Contact Yadira to Selected Contact</button>
+					</div>
+                    -->
+                    <div class="logo">
+                        <img src="images/hotel-class.gif" />
+
+                    </div>
+				</div>
+			</div>
+			<div>
+				<div class="contacts" id="idContacts">
+                    <!--
+					<div class="contact">
+						<div class="notifications">
+							<span>&#11088; Hotel Notifications</span>
+						</div>
+	
+					</div>
+					<div class="contact" >
+						<div class="header" >
+                            <div class="send" onclick="alert('send');">send</div>
+                            <div class="remove">remove</div>
+                            <div class="role">Super Host <span style="font-weight:bold">Julia</span></div>
+                            
+                        </div>
+                        <div class="body" onclick="alert('body');">
+                            <div class="name">
+                                &#11088; Julia <span style="color:#00C000;font-size:9pt;margin-left:40px;">Typing...</span>
+                            </div>
+                            <div>
+                                <div class="image" >
+                                    <img src="images/julia.jpg" />
+                                </div>
+                                <div class="text">
+                                    Hola Julia acordate de enviarme las toallas
+                                </div>
+                            </div>
+                            <div>
+                                <div class="hour">
+                                    12:23
+                                </div>
+                                <div class="unread-high" style="visibility:visible;">
+                                    2
+                                </div>
+                                <div class="unread-normal" style="visibility:visible;">
+                                    1
+                                </div>
+                            </div>                            
+    
+                        </div>
+                    </div>
+                    -->
+				</div>
+				<div class="chat">
+					<div class="allmessages">
+						<div class="notification-down" id="idNotify" >
+							<div><img src="images/icon-info.gif" /></div>
+							<div style="margin-left:5px; margin-top:5px;">
+								Notificación muy larga para ver cómo queda la imagen 
+                            </div>
+						</div>
+
+
+						<div class="container" id="idServices" style="display:none;">
+							<div class="services">
+								<div class="services-list" id="id-services-list">
+								</div>
+							</div>
+							<div class="show">
+								<div class="title"  id="id-service-title">
+								</div>
+								<div class="content" id="id-service-content">
+								</div>
+							</div>
+						</div>
+				
+
+                        <!--<div class="keys" id="idKeys"></div>-->
+
+
+						<div class="messages" id="idMessages">
+                            <!--
+							<div class="message" style="margin-left:10px; background-color: white;">
+								<div class="title">
+									From Service Room
+								</div>
+								<div class="text">
+									Hola Marcelo fijate de cambiar las toallas antes de salir de la habitación.
+									Mensaje muy pero muy largo para ver si el div responde bien
+								</div>
+								<div class="status"><span class="message-read">✓✓</span><span class="hour"> 10:33</span></div> 
+							</div>
+							<div class="message" style="margin: 0px 10px 0px auto;background-color: #C0FFC0;">
+								<div class="text">
+									<span style="font-size:32pt;">😃</span>
+								</div>
+								<div class="status"><span class="message-read">✓✓</span><span class="hour"> 10:33</span></div> 
+							</div>
+							<div class="message" style="margin-left:10px; background-color: white;">
+								<div class="title">
+									From Service Room
+								</div>
+								<div class="text">
+									Hola Marcelo fijate de cambiar las toallas antes de salir de la habitación.
+									Mensaje muy pero muy largo para ver si el div responde bien
+								</div>
+								<div class="status"><span class="message-read">✓✓</span><span class="hour"> 10:33</span></div> 
+							</div>
+                            -->
+						</div>
+					</div>
+					<div class="input" id="idinput">
+						<input class="inputtext input-panel" style="visibility: hidden;" placeholder="Text to Send" id="idTextMessage" onkeypress="return(keyPress(event));" value="" />
+						<span class="priority  input-panel" style="visibility: hidden;" id="idPriority" onclick="setMessagePriority('high')">urgent</span>
+						<span class="icon input-panel" style="visibility: hidden;" title ="OK" onclick="sendIcon('👍🏻');">👍🏻</span>
+						<span class="icon input-panel" style="visibility: hidden;" title="Thank you, Perfect, Great!" onclick="sendIcon('😊');">😊</span>
+						<span class="icon input-panel" style="visibility: hidden;" title="Waiting for your answer" onclick="sendIcon('💤');">💤</span>
+						<!--<span id="idPanic" class="priority" style="background-color: red;color:white;font-weight:400;border:0" onclick="setMessagePriority('high')">Panic</span>-->
+					</div>
+				</div>
+			</div>
+		<div>
+		<script>
+			let wsUri = "wss://your uri api gateway";
+			let state = {};
+            let idLocal = 0;
+            
+			document.getElementById('id-services-list').innerHTML = renderServices(services);
+
+			function init()
+			{
+				state = {
+					selectedContact:null,
+					message:{priority:'normal'},
+					typing:{
+						timer:false, //last time key type
+						sent:null, //last time sent typing
+                    },
+                    ping:true
+				};
+				idLocal = 0;
+				document.getElementById('idMessages').innerHTML = '';
+				document.getElementById('idContacts').innerHTML = '';
+				document.getElementById('idUserInfo').innerHTML = '';
+                document.getElementById('idContactSelected').innerHTML = '';
+                document.getElementById('id-user-buttons').style.display = 'none';
+				document.getElementById('id-services-list').innerHTML = renderServices();
+                document.getElementById('idServices').style.display = 'none';
+                let inputPanel = document.getElementsByClassName('input-panel')
+                for(var i = 0; i < inputPanel.length ; i++)
+                    inputPanel[i].style.visibility='hidden';
+
+                document.getElementById('id-button-services').innerText = 'Open Services';
+                state.panelServices = false;
+                
+
+            }
+            
+            function ping()
+            {
+                if(state.ping)
+                {
+                    let data = {action:'ping'};
+                    doSend(data);
+                    setTimeout(ping, 480000)
+                }
+            }
+            function showKeys()
+            {
+                if(document.getElementById('id-show-keys').getAttribute('state') === 'open')
+                {
+                    document.getElementById('id-show-keys').setAttribute('state','close');
+                    document.getElementById('id-show-keys').innerText = 'Show Keys';
+                    document.getElementById('idMessages').style.display = 'block';
+                    return;
+                }
+                document.getElementById('id-show-keys').setAttribute('state','open');
+                document.getElementById('id-show-keys').innerText = 'Hide Keys';
+                document.getElementById('idMessages').style.display = 'none';
+
+                let data = {
+                    action: 'getKeys',
+                    payload : {
+                        idKey: state.contact.idContact
+                    }
+                }
+                console.log('data', data);
+                doSend(data);
+
+
+            }
+
+            function panelServices()
+            {
+                if (state.panelServices && state.panelServices===true)
+                {
+                    state.panelServices = false;
+                    document.getElementById('idServices').style.display = 'none';
+                    document.getElementById('id-button-services').innerText = 'Open Services';
+
+                } else {
+                    state.panelServices = true;
+                    document.getElementById('idServices').style.display = 'flex';
+                    document.getElementById('id-button-services').innerText = 'Close Services';
+                }
+            }
+
+			function setMessagePriority(p)
+			{
+				if(p === null)
+				{
+					document.getElementById('idTextMessage').style.borderLeftColor = '#c0c0c0';
+					document.getElementById('idTextMessage').style.borderRightColor = '#c0c0c0';
+					document.getElementById('idPriority').innerText = 'urgent';
+					document.getElementById('idPriority').style.color = 'red';
+					state.message.priority = 'normal';
+				} else {
+					if(state.message.priority ==='high')
+					{
+						document.getElementById('idTextMessage').style.borderLeftColor = '#c0c0c0';
+						document.getElementById('idTextMessage').style.borderRightColor = '#c0c0c0';
+						document.getElementById('idPriority').innerText = 'urgent';
+						document.getElementById('idPriority').style.color = 'red';
+						state.message.priority = 'normal';
+					}
+					else
+					{
+						document.getElementById('idTextMessage').style.borderLeftColor = 'lightsalmon';
+						document.getElementById('idTextMessage').style.borderRightColor = 'lightsalmon';
+						document.getElementById('idPriority').innerText = 'normal';
+						document.getElementById('idPriority').style.color = 'black';
+						state.message.priority = 'high';
+
+					}
+				}
+				document.getElementById('idTextMessage').focus();
+
+			}
+			function sendContact(idContact)
+			{
+				let data = {
+					//action: 'sendContact',
+					action: 'addContactBothSides',
+					payload: {
+						from: '' + idContact,
+						to: '' + state.selectedContact.id
+					}
+				}
+				console.log('send contact',data);
+				doSend(data);
+
+            }
+			function addContact(idContact)
+			{
+				//bar Isabel Lounge
+				let data = {
+					action: 'addContactBothSides',
+					payload: {
+						from: '' + idContact,
+						to: '' + state.contact.idContact
+					}
+				}
+				console.log('add contact',data);
+				doSend(data);
+			}
+            function removeContact(idContact)
+            {
+                let data = {
+                    action: 'removeContactFromContact',
+                    payload:{
+                        from: '' + state.contact.idContact,
+                        to: '' + idContact
+                    }
+                };
+                doSend(data);
+            }
+
+
+			function sendMessage(data)
+			{
+				let m = {
+					from: state.user,
+					priority: state.message.priority,
+					content: data.payload.content,
+					type:'message',
+					message: data.payload.message,
+					title: data.payload.title
+				}
+
+				let div = renderMessage(m);
+				div.setAttribute('id','idLocal-' + idLocal);
+
+				//console.log('render key press message',div.outerHTML);
+
+
+				let messages = document.getElementById('idMessages');
+				messages.appendChild(div);
+				messages.scrollTop = messages.scrollHeight;
+
+				div = document.getElementById('idcontact-' +  state.selectedContact.id);
+                if(data.payload.content === 'icon')
+                {
+                    div.getElementsByClassName('text')[0].innerText = data.payload.message.icon;
+                    div.getElementsByClassName('text')[0].style.fontSize = '16pt';
+                }
+                else
+                {
+                    div.getElementsByClassName('text')[0].innerText = data.payload.message.text;
+                    div.getElementsByClassName('text')[0].style.fontSize = '';
+                }
+
+				idLocal++;
+				data.payload.idConn = state.contact.idConn;
+				//console.log('idConn sent message', state.contact.idConn);
+				doSend(data);
+			}
+			function sendIcon(icon)
+			{
+				if(state.selectedContact)
+				{
+					let data = 	{
+						action:'sendMessage',
+						payload:{
+							idLocal: idLocal,
+							from: state.user,
+							to: '' + state.selectedContact.id,
+							priority: 'low',
+							content:'icon',
+							type:'message',
+							message:{
+                                icon:icon
+                            }
+						}
+					};
+					if(state.contact.comunity.startsWith('hotel'))
+						data.payload.title = state.contact.name;
+
+					sendMessage(data);
+
+				}
+			}
+			function keyPress(e)
+			{
+				if(!state.selectedContact)
+					return;
+				let d = (new Date).getTime();
+				let data = {};
+				//console.log('contact', state.contact);
+				//console.log('select contact',state.selectedContact)
+				//console.log('idconn' , state.selectedContact.idConn);
+				//console.log('typing' , state.typing);
+
+				if((state.typing.sent === null || (d - state.typing.sent) > 1500) 
+					&& state.selectedContact.idConn //OJO CON ESTO NO DEBE SER EL CONTACTO DESTINO
+					&& state.selectedContact.online
+				)
+				{
+					//Try to send typing
+					data = {
+						action:'typing',
+						payload:{
+							from: state.contact.idContact,
+							to: state.selectedContact.id,
+							idConn: state.selectedContact.idConn
+						}
+					}
+					state.typing.sent = d;
+					//console.log('send typing', data)
+					doSend(data);
+				}
+
+				if(e.keyCode == 13 
+					&& document.getElementById('idTextMessage').value.trim() != ''
+					&& 	state.selectedContact !== null
+
+				)
+				{
+					//console.log('contact', state.contact)
+					let data = 	{
+						action:'sendMessage',
+						payload:{
+							idLocal: idLocal,
+							from: state.user,
+							to: '' + state.selectedContact.id,
+							priority: state.message.priority,
+							content:'text',
+							type:'message',
+							message: {
+                                'text': document.getElementById('idTextMessage').value
+                            }
+						}
+					};
+					if(state.contact.comunity.startsWith('hotel'))
+						data.payload.title = state.contact.name;
+					
+					//console.log('name', state.contact.name);
+					//console.log('comunity', state.contact.comunity);
+					//console.log('payload title', data.payload.title);
+					
+					sendMessage(data);
+					document.getElementById('idTextMessage').value = '';
+					setMessagePriority(null);
+				}
+			}
+			
+			async function login()
+			{
+				init();
+
+				let user = undefined;
+				let token = await cognitoLogin('marcelor.ar@gmail.com', 'Cognito__1960');
+				console.log('token', token);
+				//console.log('wsUri',wsUri);
+				switch(document.getElementById('idUser').value.toLowerCase())
+				{
+					case 'marcelo':
+						user = '1';
+						break;
+					case 'carolina':
+						user = '2';
+						break;
+					case 'diego':
+						user = '5';
+						break;
+					case 'julia':
+						user = '1000';
+						break;
+					case 'yadira':
+						user = 'yadira';
+						break;
+					case 'vinicius':
+						user = 'resto';
+                        break;
+                    case 'gal':
+                        user = 'spa'
+                        break;
+                    case 'toquinho':
+                        user = 'taxi'
+                        break;
+                    case 'maria':
+                        user = 'roomservice';
+                        break;
+                    case 'anthony':
+                        user = 'chef';
+                        break;
+
+
+				}
+				if(user && token)
+				{
+					state.user = user;
+					initWebSocket(wsUri + '?token=' + token);
+
+				}
+
+			}
+			function initWebSocket(ws)
+			{
+				websocket = new WebSocket(ws);
+				websocket.onopen = function(evt) { onOpen(evt) };
+				websocket.onclose = function(evt) { onClose(evt) };
+				websocket.onmessage = function(evt) { onMessage(evt) };
+				websocket.onerror = function(evt) { onError(evt) };
+			}
+			function onOpen(evt)
+			{
+				console.log('Open Websocket:', (new Date).toLocaleTimeString()); 
+				//console.log('data:' + JSON.stringify(evt));
+				//console.log(evt);
+				//websocket.send('{"connectionId": "$context.connectionId"}');
+				var data = {
+					action: 'connect',
+					payload: {
+						from: state.user
+					}
+				};
+				//console.log('data:' , JSON.stringify(data));
+				doSend(data);
+				
+			}
+
+			function onClose(evt)
+			{
+				console.log('Disconnect Websocket:', (new Date).toLocaleTimeString()); 
+				//init();
+			}
+			function onError(evt)
+			{
+                console.log('Websocket Error:' + evt.data);
+                init();
+                state.ping = false;
+			}
+
+			function doSend(data)
+			{
+				websocket.send(JSON.stringify(
+					data
+				));
+			}
+
+			function formatDate(date)
+			{
+				d = new Date(date);
+				return(d.getHours() + ':' + d.getMinutes());
+			}
+			function getMessages(id)
+			{
+                console.log('getmessages', id)
+                if (state.panelServices && state.panelServices===true)
+                {
+                    //Cerrar el panel de servicios
+                    panelServices();
+
+                }
+				if(state.selectedContact && state.selectedContact.id === id)
+					return;
+				if(state.selectedContact)
+					document.getElementById('idcontact-' + state.selectedContact.id).style.backgroundColor = '';
+
+                console.log('selecciona background color');
+				document.getElementById('idcontact-' + id).style.backgroundColor = '#eee';
+				document.getElementById('idcontact-' + id).getElementsByClassName('unread-normal')[0].style.visibility = 'hidden';
+				document.getElementById('idcontact-' + id).getElementsByClassName('unread-normal')[0].innerText = '0';
+				document.getElementById('idcontact-' + id).getElementsByClassName('unread-high')[0].style.visibility = 'hidden';
+				document.getElementById('idcontact-' + id).getElementsByClassName('unread-high')[0].innerText = '0';
+
+				
+				let contact = state.contact.contacts.find((c)=>{
+					if(c.id == id)
+						return(true); else return(false);
+
+				});
+				state.selectedContact = contact;
+				state.typing.sent = null;
+				if(id === 'hotel')
+				{
+                    let inputPanel = document.getElementsByClassName('input-panel')
+                    for(var i = 0; i < inputPanel.length ; i++)
+                        inputPanel[i].style.visibility='hidden';
+
+					//document.getElementById('idinput').style.display = 'none';
+					document.getElementById('idContactSelected').innerHTML = '';
+				}
+				else
+				{
+                    let inputPanel = document.getElementsByClassName('input-panel')
+                    for(var i = 0; i < inputPanel.length ; i++)
+                        inputPanel[i].style.visibility='visible';
+					showContactSelected(contact);
+					//document.getElementById('idinput').style.display = 'block';
+
+				}
+
+                document.getElementById('id-user-buttons').style.display = 'flex';
+				
+				let data = {
+					action:'getMessages',
+					payload:{
+						idMe:state.user,
+						idContact:id
+					}
+				};
+				doSend(data);
+			}
+			function showUser(contact)
+			{
+				let html = '<div class="image" style="width:45px;height:45px;">' +
+					'<img style="max-width:100%;max-height:100%;" src="images/' + contact.image + '"/>' +
+                    '</div>' +
+                    '<div class="description">' +
+                        '<div class="name">' + contact.name + '</div>' +
+                        '<div class="info">' + contact.friendly + '</div>' +
+                    '</div>';
+
+				document.getElementById('idUserInfo').innerHTML = html;
+			}
+			function showContactSelected(contact)
+			{
+				let html = '<div class="image" style="width:45px;height:45px;">' +
+					'<img style="max-width:100%;max-height:100%;" src="images/' + contact.image + '"/>' +
+                    '</div>' +
+                    '<div class="description">' +
+                        '<div class="name">' + contact.name + '</div>' +
+                        '<div class="info">' + contact.friendly + '</div>' +
+                        '<div class="typing" id="idContactSelectedTyping">' + 
+                            'Typing...' + 
+                        '</div>' + 
+                    '</div>';
+                document.getElementById('idContactSelected').innerHTML = html;
+                document.getElementById('id-user-buttons').style.display = 'flex';
+
+
+			}
+			function getHTMLContact(contact)
+			{
+				let message = '';
+				if(contact.message)
+				{
+					message = contact.message.message;
+					if(contact.message.content === 'icon')
+                        message = '<span style="font-size:16pt;">' + message.icon + '</span>';
+                    else
+                        message = message.text;
+
+				}
+
+				let html = '<div class="contact" id="idcontact-' + contact.id + '">' + 
+                    '<div class="header">'+
+                        '<div class="send" onclick="sendContact(\'' + contact.id + '\');">send</div>' +
+                        '<div class="remove" onclick="removeContact(\'' + contact.id + '\');">remove</div>' +
+                        '<div class="role">' +
+					    contact.friendly +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="body" onclick="getMessages(\''  + contact.id + '\');">' +
+                        '<div class="name">' + 
+                            (contact.comunity.startsWith('hotel')?'&#11088; ':' ') + contact.name + 
+                        '</div>' +
+                        '<div>' +
+                            '<div class="image">' +
+                            '<img src="images/' + contact.image + '" />' +
+                            '</div>' +
+                            '<div class="text" id="idContactText-' + contact.id + '">' + 
+                                    message + 
+                            '</div>' +
+                            '<div class="typing" id="idContactTyping-'+ contact.id + '">' + 
+                            'Typing...' + 
+                            '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="hour">' + 
+                                    (contact.message ? formatDate(contact.message.date) : '') + 
+                            '</div>' +
+                            '<div class="unread-normal" style="visibility:hidden;">0</div>' +
+                            '<div class="unread-high" style="visibility:hidden;">0</div>' +
+                        '</div>' +
+                    '</div>' +
+				'</div>';
+				return(html);
+			}
+			function checkTyping()
+			{
+				console.log('typing check');
+				let again = false;
+				let d = (new Date()).getTime();
+				state.contact.contacts.forEach((c)=>{
+					if(c.typing)
+					{
+						if(c.typing.show && (d - c.typing.time) > 2000)
+						{
+							document.getElementById('idContactTyping-' + c.id).style.display = 'none';
+							document.getElementById('idContactText-' + c.id).style.display = 'block';
+							if(c.id === state.selectedContact.id)
+								document.getElementById('idContactSelectedTyping').style.display = 'none';
+
+							c.typing.show = false;
+							
+						} else 
+						{
+							again = true;
+						}
+					}
+				});
+				if(again)
+					setTimeout(checkTyping, 2000);
+				else
+					state.typing.timer = false;
+
+			}
+			function setMessageRead(id)
+			{
+				console.log('SET read message', id);
+				let data = {
+					action:'set-read-message',
+					payload:{idMessage: id}
+				};
+				doSend(data);
+			}
+			function getHTMLNotificationContact()
+			{
+				let html = '<div class="contact" id="idcontact-hotel" onclick=getMessages("hotel")>' +
+								'<div class="notifications">' +
+									'&#11088; Hotel Notifications' +
+								'</div>' +
+								'<div class="unread-normal" style="visibility:hidden;">0</div>' +
+								'<div class="unread-high" style="visibility:hidden;">0</div>' +
+							'</div>';
+				return(html);
+
+            }
+            function delayNotify(payload)
+            {
+                delete payload.wait;
+                payload.date = (new Date()).toISOString();
+                evt = {
+                    data: JSON.stringify({
+                        success: true,
+                        action:'notify',
+                        payload: payload
+                    })
+                }
+                //console.log('delay notify', evt);
+                onMessage(evt);
+            }
+
+            function noContactSelected()
+            {
+                state.selectedContact = null;
+
+                inputPanel = document.getElementsByClassName('input-panel')
+                for(var i = 0; i < inputPanel.length ; i++)
+                    inputPanel[i].style.visibility='hidden';
+                
+                //document.getElementById('idContactSelected').innerHTML = '';
+                //document.getElementById('id-user-buttons').style.display = 'none';
+                //document.getElementById('id-button-services').innerText = 'Open Services';
+                //document.getElementById('idServices').style.display = 'none';
+                //state.panelServices = false;
+                
+                state.message.priority ='normal';
+
+                document.getElementById('idTextMessage').style.borderLeftColor = '#c0c0c0';
+                document.getElementById('idTextMessage').style.borderRightColor = '#c0c0c0';
+                document.getElementById('idPriority').innerText = 'urgent';
+                document.getElementById('idPriority').style.color = '#c0c0c0';
+                state.message.priority = 'normal';
+
+/*
+                state.typing = {
+						timer:false, //last time key type
+						sent:null, //last time sent typing
+				};             
+*/
+            }
+            function disableButton(b)
+            {
+                b.setAttribute('disabled','disabled');
+            }
+			function onMessage(evt)
+			{
+				console.log(JSON.parse(evt.data));
+				let data = JSON.parse(evt.data);
+				let content = '';
+				let contacts = null;
+				let contact = null;
+                let messages = null;
+                let inputPanel = null;
+				let div = null;
+				let span = null;
+				let html = '';
+				let priority = '';
+				let message = '';
+				let icon = '';
+				let title = '';
+				if(data.success)
+				{
+					switch(data.action)
+					{
+						case 'connect':
+                            showUser(data.payload.contact);
+                            document.getElementById('id-user-buttons').style.display = 'flex'; 
+							state.contact = data.payload.contact;
+							state.contact.idConn = data.payload.contact.idConn;
+							//console.log('id conn ME', data.payload.contact.idConn);
+							//console.log('conn id', data.payload.idConnection);
+							//console.log('conn id old', state.contact.idConn);
+							contacts = data.payload.contact.contacts;
+							contacts.forEach((c)=>{
+								if(c.role == 'superhost')
+									contact = c;
+								else
+									content += getHTMLContact(c);
+							});
+							if(contact)
+								content = getHTMLContact(contact) + content;
+							document.getElementById('idContacts').innerHTML = getHTMLNotificationContact() + content;
+                            contacts.push({id:'hotel'});
+                            noContactSelected();
+
+                            if(state.ping)
+                                ping();
+                           
+							break;
+						case 'addBothContacts-response':
+							document.getElementById('idPlayer-message-high').play();
+							break;
+
+						case 'send-contact':
+							document.getElementById('idPlayer-message-high').play();
+							content = getHTMLContact(data.payload);
+							console.log('content', content)
+							div = document.createElement('div');
+							div.innerHTML = content;
+                            contacts = document.getElementById('idContacts')
+                            contacts.appendChild(div);
+                            contacts.scrollTop = contacts.scrollHeight;
+
+							state.contact.contacts.push(data.payload);
+							break;
+						case 'getMessages':
+							//console.log('get messages contact selected', JSON.stringify(state.selectedContact))
+							//console.log('id contact', data.payload.idContact);
+							//console.log('select contact', state.selectedContact.id);
+
+							if(!(state.selectedContact) || data.payload.idContact !== state.selectedContact.id)
+								return;
+							messages = data.payload.messages;
+							//console.log('messages', messages);
+							//contact.messages = data.payload.messages;
+							messages.forEach((c)=>{
+								content += renderMessage(c).outerHTML;
+							});
+							div = document.getElementById('idMessages');
+							div.innerHTML = content;
+							div.scrollTop = div.scrollHeight;
+							break;
+						case 'sendMessage':
+							//Receive the message already put in messages HTML search by idLocal attribute
+							//console.log('sendMessage reponse payload', data.payload);
+							contact = state.contact.contacts.find((c)=>{
+								if(c.id === data.payload.to)
+									return(true); else return(false); //--OJO creo que no debería estar el else
+							});
+							if(contact)
+							{
+								if(data.payload.sent)
+								{
+									contact.idConn = data.payload.idConn;
+									contact.online = true;
+								}
+								else
+								{
+									contact.idConn = null;
+									contact.online = false;
+									
+								}
+							}
+							if(!(state.selectedContact) || state.selectedContact.id !== data.payload.to) //En caso que se haya cambiado de contacto y lleguen los contactos anteriores.
+								return;
+
+							if(data.payload.sent)
+							{
+								state.selectedContact.idConn = data.payload.idConn;
+								state.selectedContact.online = true;
+							}
+							else 
+							{
+								state.selectedContact.idConn = null;
+								state.selectedContact.online = false;
+
+							}
+
+							//console.log('contact target', contact);
+							//console.log('id from', data.payload.from);
+							//console.log('id selected contact', state.selectedContact);
+							div = document.getElementById('idLocal-' + data.payload.idLocal);
+							if(div !== null) //--OJO sacar null
+							{
+								let sent = '';
+								if(data.payload.sent)
+									sent = '<span' + (data.payload.read?' class="message-read"':'') +  '>✓✓</span>';
+								else
+									sent = '<span>✓</span>';
+
+								div.getElementsByClassName('status')[0].innerHTML = '<span class="hour">' + formatDate(data.payload.date) + ' </span>' + sent;
+								div.setAttribute('idMessage', data.payload.idMessage);
+
+								messages = document.getElementById('idMessages');
+								messages.scrollTop = messages.scrollHeight;
+							}
+							break;
+						case 'notify':
+
+                            if(data.payload.wait)
+                            {
+                                console.log('notify wait', data.payload.wait);
+                                setTimeout(()=>{delayNotify(data.payload)},data.payload.wait);    
+                                return;
+                            }
+							switch(data.payload.severity)
+							{
+								case 'info':
+									icon = '<div><img src="images/icon-info.gif" /></div>';
+									document.getElementById('idPlayer-notify-info').play();
+									break;
+								case 'warning':
+                                    icon = '<div><img src="images/icon-warning.gif" /></div>';
+									document.getElementById('idPlayer-notify-warning').play();
+									break;
+								case 'alarm':
+                                    icon = '<div><img src="images/icon-alarm.gif" /></div>';
+									document.getElementById('idPlayer-notify-alarm').play();
+									break;
+							}
+							if(state.selectedContact && (data.payload.from === state.selectedContact.id))
+							{
+                                let m = {
+                                    from: data.payload.from,
+                                    title: data.payload.title,
+                                    priority: data.payload.priority,
+                                    message: data.payload.message,
+                                    date: data.payload.date,
+                                    content: data.payload.content
+
+                                }
+								
+								messages = document.getElementById('idMessages');
+								messages.appendChild(renderMessage(m));
+								messages.scrollTop = messages.scrollHeight;
+                                //console.log('notify w/HTML', renderMessage(m));
+							}	
+							else 
+							{
+                                content = data.payload.message.text;
+                                if(data.payload.popup === 'html')
+                                    content = data.payload.message.html;
+								div = document.getElementById('idNotify');
+								div.innerHTML =  icon + '<div style="margin-left:5px; margin-top:5px;">' + content + '</div>';
+								div.setAttribute('class', 'notification-up');
+								div.style.borderLeftColor = '';
+								if(data.payload.priority === 'high')
+									div.style.borderLeftColor = 'lightsalmon';
+
+
+								setTimeout(()=>{document.getElementById('idNotify').setAttribute('class','notification-down')},10000);
+								
+								div = document.getElementById('idcontact-' +  data.payload.from);
+								let c = 0;
+								if(data.payload.priority === 'high')
+								{
+									c = div.getElementsByClassName('unread-high')[0].innerText ;
+									c++;
+									div.getElementsByClassName('unread-high')[0].innerText = c;
+									div.getElementsByClassName('unread-high')[0].style.visibility = 'visible';
+
+								}
+								else 
+								{
+									c = div.getElementsByClassName('unread-normal')[0].innerText ;
+									c++;
+									div.getElementsByClassName('unread-normal')[0].innerText = c;
+									div.getElementsByClassName('unread-normal')[0].style.visibility = 'visible';
+								}
+							}						
+							break;
+
+						case 'receiveMessage':
+							if(data.payload.priority === 'high')
+								document.getElementById('idPlayer-message-high').play();
+							else
+								document.getElementById('idPlayer-message-normal').play();
+
+							contact = state.contact.contacts.find((c)=>{
+								if(c.id === data.payload.from) //--OJO sacar el false
+									return(true); else return(false);
+
+							});
+							//console.log('receive contact target', contact);
+							//console.log('data.payload.idConn', data.payload.idConn);
+							if(!contact)
+								return;
+
+							contact.idConn = data.payload.idConn;
+							contact.online = true;
+
+							//console.log('id conn receive message', contact.idConn)
+							//message = data.payload.message;
+
+
+							if(state.selectedContact && (data.payload.from === state.selectedContact.id))
+							{
+								setMessageRead(data.payload.idMessage);
+								state.selectedContact.idConn = data.payload.idConn;
+								state.selectedContact.online = true;
+
+								let m = {
+									from: data.payload.from,
+									message: data.payload.message,
+									content: data.payload.content,
+									priority: data.payload.priority,
+									title: data.payload.title,
+									date: data.payload.date
+								}
+								//console.log('receive message', renderMessage(m).outerHTML);
+								div = renderMessage(m);
+
+
+								messages = document.getElementById('idMessages');
+								messages.appendChild(div);
+								messages.scrollTop = messages.scrollHeight;
+								div = document.getElementById('idcontact-' +  data.payload.from);
+                                if(data.payload.content === 'icon')
+                                {
+                                    div.getElementsByClassName('text')[0].innerText = data.payload.message.icon;
+									div.getElementsByClassName('text')[0].style.fontSize = '16pt';
+                                } else {
+                                    div.getElementsByClassName('text')[0].innerText = data.payload.message.text;
+									div.getElementsByClassName('text')[0].style.fontSize = '';
+                                }
+                                //Quitar el typing
+								document.getElementById('idContactTyping-' + state.selectedContact.id).style.display = 'none';
+								document.getElementById('idContactText-' + state.selectedContact.id).style.display = 'block';
+                                document.getElementById('idContactSelectedTyping').style.display = 'none';
+
+							}
+							else
+							{
+								div = document.getElementById('idcontact-' +  data.payload.from);
+								let c = 0;
+								if(data.payload.priority === 'high')
+								{
+									c = div.getElementsByClassName('unread-high')[0].innerText ;
+									c++;
+									div.getElementsByClassName('unread-high')[0].innerText = c;
+									div.getElementsByClassName('unread-high')[0].style.visibility = 'visible';
+
+								}
+								else 
+								{
+									c = div.getElementsByClassName('unread-normal')[0].innerText ;
+									c++;
+									div.getElementsByClassName('unread-normal')[0].innerText = c;
+									div.getElementsByClassName('unread-normal')[0].style.visibility = 'visible';
+								}
+                                if(data.payload.content === 'icon')
+                                {
+                                    div.getElementsByClassName('text')[0].innerText = data.payload.message.icon;
+                                    div.getElementsByClassName('text')[0].style.fontSize = '16pt';
+                                }
+                                else
+                                {
+                                    div.getElementsByClassName('text')[0].innerText = data.payload.message.text;
+                                    div.getElementsByClassName('text')[0].style.fontSize = '';
+                                }
+							}
+							break;
+						case 'typing':
+							console.log('typing');
+							contact = state.contact.contacts.find((c)=>{
+										if(c.id === data.payload.from)
+											return(true); else return(false);
+
+									});
+							if(!contact.typing)
+							{
+								contact.typing = {show:false}
+							}
+							contact.typing.time = (new Date()).getTime();
+							if(!contact.typing.show)
+							{
+								console.log('typing show init', document.getElementById('idContactText-' + contact.id).style.display);
+								contact.typing.show = true;
+								document.getElementById('idContactText-' + contact.id).style.display = 'none';
+								document.getElementById('idContactTyping-' + contact.id).style.display = 'block';
+								if(state.selectedContact && (contact.id === state.selectedContact.id))
+									document.getElementById('idContactSelectedTyping').style.display = 'block';
+
+								console.log('typing show init', document.getElementById('idContactText-' + contact.id).style.display);
+
+								if(!state.typing.timer)
+								{
+									state.typing.timer = true;
+									setTimeout(checkTyping, 2000);
+								}
+							}
+							break;
+						case 'typing-response':
+							contact = state.contact.contacts.find((c)=>{
+									if(c.id === data.payload.to)
+										return(true); else return(false);
+
+								});
+							contact.online = data.payload.online;
+							if(state.selectedContact && (data.payload.to === state.selectedContact.id))
+								state.selectedContact.online = data.payload.online;
+							//console.log('typing response', data);
+                            break;
+                        case 'remove-contact-response':
+                            //quitar de contactos payload.to
+                            if(state.selectedContact && (state.selectedContact.id === data.payload.to))
+                            {
+                                console.log('remover el contacto seleccionado');
+                                document.getElementById('idcontact-' + data.payload.to).remove();
+                                noContactSelected();
+                                //Close Services / disable Open Services
+
+                            } else {
+                                console.log('remover un contacto no seleccionado');
+                                document.getElementById('idcontact-' + data.payload.to).remove();
+
+                            }
+                            for(var i = 0 ; i < state.contact.contacts.length ; i++)
+                            {
+                                if(state.contact.contacts[i].id === data.payload.to)
+                                {
+                                    state.contact.contacts.splice(i,1);
+                                    break;
+                                }
+                            }
+                            break;
+                        case 'getKeys-response':
+                            messages = data.payload.messages;
+                                //console.log('messages', messages);
+                                //contact.messages = data.payload.messages;
+                                messages.forEach((c)=>{
+                                    content += renderMessage(c).outerHTML;
+                                });
+                                //div = document.getElementById('idKeys');
+                                //div.innerHTML = content;
+
+                            break;
+					}
+
+				}
+			}
+		</script>
+	</body>
+	</html>
